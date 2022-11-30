@@ -9,7 +9,7 @@ const Player = (first, last, piece) => {
 }
 
 const Board = (() => {
-    let board = new Array();
+    let board = [];
 
     const setField = (index, piece) => {
         board[index] = piece;
