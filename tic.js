@@ -58,10 +58,6 @@ const gameController = (() => {
         return gameOver
     }
 
-    const getTurn = () => {
-        return currentTurn = (currentTurn === player1.getPiece()) ? player2.getPiece() : player1.getPiece();
-    }
-
     const winningMove = (index) => {
         const winners = [
             /* Horizontal */
