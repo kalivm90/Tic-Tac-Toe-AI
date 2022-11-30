@@ -1,122 +1,156 @@
-var Board = (newBoard) => {
-    let board = new Array(newBoard);
-    // this runs everytime an instance is instantiated
-    const setBoard = () => {
-        let main = new Array();
-        for (let i = 0; i < newBoard.length; i+=3) {
-            let temp = new Array()
-            temp.push(newBoard[i], newBoard[i+1], newBoard[i+2])
-            main.push(temp)
-        }
-        return main;
-    }
-
-    const updateBoard = (xCord, yCord, piece) => {
-        board[xCord][yCord] = piece
-    }
-
-    // defining setBoard right here because of initialization issues
-    // NOT SURE IF IM USING THIS OR NOT
-    // let board = setBoard(newBoard)
-
-    return {board, updateBoard, setBoard}
-}
-
-const Player = (firstName, lastName, piece) => {
+// TODO, ADD FUNCTIONALITY FOR GAME OVER
+const Player = (first, last, piece) => {
+    const getFirst = () => first;
+    const getLast = () => last;
     const getPiece = () => piece;
-    const getName = () => `${firstName} ${lastName}`;
+    const getFullName = () => `${first} ${last}`
 
-    return {getPiece, getName}
-};
-
-
-const Game = (person, array) => {
-    let gameBoard = Board(array);
-    let player = person;
-    let turn = player.getPiece()
-    let currentEvent;
-
-    const start = () => {
-        for (let i = 0; i < gameBoard.board.length; i++) {
-            let current = gameBoard.board[i]
-            current.forEach(item => item.onclick = event => getEvent(event))
-        }
-    }
-
-    const getEvent = (event) => {
-        currentEvent = event
-    };
-
-    return {start}
+    return { getFirst, getLast, getPiece, getFullName };
 }
 
-const Render = (() => {
-    const submit = document.querySelector("#submit");
-    const navbar = document.querySelector("nav")
-    const login = document.querySelector("#login")
-    const header = document.querySelector("header")
-    var intro = document.querySelector(".intro p")
-    const scoreboard = document.querySelector(".scoreboard");
-    const board = document.querySelector(".gameBoard");
-    var box = board.querySelectorAll(".box")
+const Board = (() => {
+    let board = new Array();
 
-    let sticky = navbar.offsetTop;
-    let player;
-    let game;
-
-    const run = () => {
-        window.onscroll = () => stickyNav();
-        login.onclick = () => showHeader()
-        submit.onclick = e => getPlayer(e);
-    };
-
-    const getPlayer = (e) => {
-        e.preventDefault();
-        // form selectors
-        const firstName = document.querySelector("#firstName").value;
-        const lastName = document.querySelector("#lastName").value;
-        const letter = document.querySelector("#letter").value;
-
-        /* you also need to show scoreboard and board in here as well, make new function and show and hide all of it there */
-        showBoard(firstName)
-        hideHeader()
-
-        player = Player(firstName, lastName, letter)
-        game = Game(player, box)
-        game.start()
-        sticky = 0
-    };
-
-    const showBoard = (firstName) => {
-        intro.innerHTML = `<span id="welcome">Welcome,</span> ${firstName}`;
-        board.style.visibility = "visible"
-        board.style.display = "grid"
+    const setField = (index, piece) => {
+        board[index] = piece;
     }
 
-    const hideHeader = () => {
-        header.style.visibility = "hidden";
-        header.style.display = "none";
+    const getField = (index) => {
+        return board[index];
     }
 
-    const showHeader = () => {
-        header.style.visibility = "visible";
-        header.style.display = "flex";
-        sticky += header.offsetHeight
-        navbar.classList.remove("sticky")
-    }
-    // navbar functionality
-    const stickyNav = () => {
-        if (window.pageYOffset >= sticky) {
-            navbar.classList.add("sticky")
-        } else {
-            navbar.classList.remove("sticky")
-        }
+    const print = () => {
+        console.log(board);
     }
 
-    return {run}
+    return { setField, getField, print };
 
 })();
 
-Render.run()
+const gameController = (() => {
+    const player1 = Player("Bill", "Simple", "X")
+    const player2 = Player("Shirley", "Temple", "O")
+    currentTurn = player1.getPiece()
+    let turnCount = 0;
+    let gameOver = false;
+
+    const playRound = (field) => {
+        const index = Number(field.target.dataset.index);
+        Board.setField(index, currentTurn)
+        field.target.textContent = currentTurn
+        console.log(currentTurn)
+
+        if (winningMove(index)) {
+            gameOver = true
+            displayController.displayMessage(`${currentTurn} wins!`)
+            displayController.reset()
+        } else if (turnCount === 9) {
+            gameOver = true
+            displayController.displayMessage("Cat's Game!")
+            displayController.reset()
+        }
+
+        currentTurn = (currentTurn === player1.getPiece()) ? player2.getPiece() : player1.getPiece();
+        turnCount += 1;
+    }
+
+    const getGameOver = () => {
+        return gameOver
+    }
+
+    const getTurn = () => {
+        return currentTurn = (currentTurn === player1.getPiece()) ? player2.getPiece() : player1.getPiece();
+    }
+
+    const winningMove = (index) => {
+        const winners = [
+            /* Horizontal */
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            /* Vertical */
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            /* Diagonal */
+            [2, 4, 6],
+            [0, 4, 8]
+        ]
+
+        // Long way in scratch.js
+        return winners.filter(row => row.includes(index))
+            .some(item => item.every(
+                (piece) => Board.getField(piece) === currentTurn
+            ))
+    }
+
+    return { playRound, getGameOver, winningMove }
+})();
+
+const displayController = (() => {
+    // buttons
+    const login = document.getElementById("login")
+    const submit = document.querySelector("#submit")
+    const resetBtn = document.querySelector("#reset")
+
+    const nav = document.querySelector("nav")
+    const form = document.querySelector(".form-container")
+    const box = document.querySelectorAll(".box");
+    let messageElem = document.querySelector(".message-container")
+
+
+    box.forEach(item => item.addEventListener("click", (e) => {
+        if (e.target.textContent === "" && !gameController.getGameOver()) gameController.playRound(e)
+    }));
+
+    submit.onclick = (e) => getPlayer(e);
+
+    const displayMessage = (message) => {
+        let text = messageElem.querySelector("#message")
+        text.textContent = message
+        messageElem.style.visibility = "visible"
+        hideDisplayMessage()
+    }
+
+    const hideDisplayMessage = () => {
+        return setTimeout(() => {
+            messageElem.style.visibility = "hidden"
+        }, 1500)
+    }
+
+    const reset = () => {
+        resetBtn.style.visibility = "visible";
+    }
+    
+    /* POP UP FORM */
+    // let playerNumber = 0;
+    // let player1;
+    // let player2;
+
+    // login.onclick = () => showForm();
+
+    // const getPlayer = (e) => {
+    //     e.preventDefault()
+    //     const first = document.querySelector("#firstName").value;
+    //     const last = document.querySelector("#lastName").value; 
+    //     const piece = document.querySelector("#piece").value;
+
+    //     (playerNumber === 0) ? player1 = Player(first, last, piece) : player2 = Player(first, last, piece);
+    //     console.log(player1.getFullName())
+    // }
+
+    // const showForm = () => {
+    //     form.style.visibility = "visible";
+    //     nav.style.position = "static"
+    // }
+
+    // const hidForm = () => {
+    //     form.style.visibility = "hidden"
+    //     nav.style.position = "fixed"
+    // }
+
+    return { displayMessage, reset}
+
+})();
 
 

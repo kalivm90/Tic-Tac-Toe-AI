@@ -5,76 +5,57 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./tic.css">
-    <title>Tic-Tac-Toe Console</title>
+    <title>Tic Tac Toe</title>
 </head>
 <body>
-    <header class="head">
-        <h2>Sign Up!</h2>
-        <input class="fields" id="firstName" type="text" placeholder="First Name" autocomplete="off" autofocus>
-        <input class="fields" type="text" name="lastName" id="lastName" autocomplete="off" placeholder="Last Name">
-        <div class="letter-container">
-            <p>Choose Letter:</p>
-            <select name="letter" id="letter">
-                <option value="x" selected>X</option>
-                <option value="o">O</option>
-            </select>
-        </div>
-        <button class="button" id="submit">Submit</button>
-    </header> 
-
     <nav>
-        <div class="title">
-            Tic-Tac-Toe
+        <div class="nav-content">
+            <h2 id="title">Tic-Tac-Toe</h2>
+            <div class="login">
+                <button class="button" id="login">Login</button>
+            </div>
         </div>
-        <div class="login">
-            <button class="button" id="login">Login</button>
+
+        <div class="message-container">
+            <p id="message"></p>
         </div>
-    </nav>  
-<!-- 
-    <div class="popup">
-        
-    </div> -->
+    </nav>
+
+    <div class="form-container">
+        <form action="">
+            <div class="ft-container">
+                <h2 id="form-title">Please Login</h2>
+            </div>
+            <div class="form-content">
+                <input id="firstName" autofocus autocomplete="off" placeholder="First Name">
+                <input id="lastName" autocomplete="off" placeholder="Last Name">
+                <div class="combo-container">
+                    <label for="piece">Select Piece:</label>
+                    <select name="piece" id="piece">
+                        <option value="X">X</option>
+                        <option value="O">O</option>
+                    </select>
+                </div>
+                <button class="button" id="submit">Submit</button>
+            </div>
+        </form>
+    </div>
     <main>
-        <div class="intro">
-            <p id="name"></p>
-        </div>
-        <div class="scoreboard">
-            <table>
-                <thead>
-                    <th style="width: min-content;">Game Number:</th>
-                    <th>Wins:</th>
-                    <th>Loses:</th>
-                </thead>
-                <tbody>
-                    <td id="gameNumber">0</td>
-                    <td id="wins">0</td>
-                    <td id="loses">0</td>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="gameBoard">
-            <div class="box">0</div>
-            <div class="box">1</div>
-            <div class="box">2</div>
-            <div class="box">3</div>
-            <div class="box">4</div>
-            <div class="box">5</div>
-            <div class="box">6</div>
-            <div class="box">7</div>
-            <div class="box">8</div>
-        </div>
-
-
-
-        <div class="content">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio ea repudiandae similique minima in tempora harum beatae voluptas officiis. Quas eum placeat repellendus quibusdam atque ullam, sit omnis maxime rerum!</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio ea repudiandae similique minima in tempora harum beatae voluptas officiis. Quas eum placeat repellendus quibusdam atque ullam, sit omnis maxime rerum!</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio ea repudiandae similique minima in tempora harum beatae voluptas officiis. Quas eum placeat repellendus quibusdam atque ullam, sit omnis maxime rerum!</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio ea repudiandae similique minima in tempora harum beatae voluptas officiis. Quas eum placeat repellendus quibusdam atque ullam, sit omnis maxime rerum!</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio ea repudiandae similique minima in tempora harum beatae voluptas officiis. Quas eum placeat repellendus quibusdam atque ullam, sit omnis maxime rerum!</p>
+        <div class="board-container">
+            <div class="board">
+                <div class="box" data-index="0"></div>
+                <div class="box" data-index="1"></div>
+                <div class="box" data-index="2"></div>
+                <div class="box" data-index="3"></div>
+                <div class="box" data-index="4"></div>
+                <div class="box" data-index="5"></div>
+                <div class="box" data-index="6"></div>
+                <div class="box" data-index="7"></div>
+                <div class="box" data-index="8"></div>
+            </div>
+            <button class="button" id="reset">Reset</button>
         </div>
     </main>
-    <script src="tic.js"></script>
+    <script src="./tic.js"></script>
 </body>
 </html>
