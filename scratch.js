@@ -21,60 +21,96 @@ const Board = (() => {
         return board[index];
     }
 
-    const print = () => {
-        console.log(board);
+    const getBoard = () => {
+        return board
     }
 
-    return { setField, getField, print };
+    const resetBoard = () => {
+        board = []
+    }
+
+    return { setField, getField, getBoard, resetBoard};
 
 })();
 
 
 
 const AI = (() => {
-    const playRound = () => {
-        let b = generatePosition()
-        let c = Board.getField(b)
-        if (!c) {
-            return b
-        } else {
-            playRound()
+    /* Returns random unfilled field */
+    const getRandomField = () => {
+        let board = Board.getBoard()
+        while (true) {
+            let random = getRandomNum()
+            if (!board[random]) {
+                console.log(random)
+                return random
+            }
         }
     }
 
-    const generatePosition = () => {
-        return Math.floor(Math.random() * 9)
+    const getRandomNum = () => {
+        return Math.floor(Math.random() * 8)
     }
 
-    return {playRound}
+
+    return {getRandomField}
 })()
 
 
 
 const gameController = (() => {
-    const player1 = Player("Bill", "Simple", "X")
-    const player2 = Player("Shirley", "Temple", "O")
-    currentTurn = player1.getPiece()
+    const player = Player("Bill", "Simple", "X")
+    const computer = Player("Computer", "AI", "O")
+    currentTurn = player.getPiece()
     let turnCount = 0;
     let gameOver = false;
+
+
+    const playRound = (field, allFields) => {
+        playerTurn(field)
+        computerTurn(allFields)
+    }
 
     const playerTurn = (field) => {
         const index = Number(field.target.dataset.index);
         Board.setField(index, currentTurn)
         field.target.textContent = currentTurn
+        checkForGameOver(index)
+    }
 
+    const computerTurn = (allFields) => {
+        if (turnCount < 8) {
+            const index = AI.getRandomField()
+            Board.setField(index, currentTurn)
+            allFields[index].textContent = currentTurn
+            checkForGameOver(index)
+        }
+    }
+
+    const checkForGameOver = (index) => {
         if (winningMove(index)) {
             gameOver = true
             displayController.displayMessage(`${currentTurn} wins!`)
-            displayController.reset()
-        } else if (turnCount === 9) {
+            displayController.showReset()
+        } 
+
+        turnCount += 1;
+
+        if (turnCount === 9) {
             gameOver = true
             displayController.displayMessage("Cat's Game!")
-            displayController.reset()
+            displayController.showReset()
         }
 
-        currentTurn = (currentTurn === player1.getPiece()) ? player2.getPiece() : player1.getPiece();
-        turnCount += 1;
+        currentTurn = currentTurn === player.getPiece() ? computer.getPiece() : player.getPiece();
+
+        return; 
+    }
+
+    const resetGame = () => {
+        currentTurn = player.getPiece();
+        turnCount = 0;
+        gameOver = false;
     }
 
     const getGameOver = () => {
@@ -103,7 +139,7 @@ const gameController = (() => {
             ))
     }
 
-    return { playerTurn, getGameOver, winningMove }
+    return { playRound, getGameOver, winningMove, resetGame}
 })();
 
 
@@ -122,10 +158,11 @@ const displayController = (() => {
 
     box.forEach(item => item.addEventListener("click", (e) => {
         if (e.target.textContent === "" && !gameController.getGameOver()) {
-            gameController.playerTurn(e)
-
+            gameController.playRound(e, box)
         }
     }));
+
+    resetBtn.onclick = () => resetBoard();
 
     submit.onclick = (e) => getPlayer(e);
 
@@ -142,10 +179,28 @@ const displayController = (() => {
         }, 1500)
     }
 
-    const reset = () => {
+    const showReset = () => {
         resetBtn.style.visibility = "visible";
     }
+
+
+    const resetBoard = () => {
+        Board.resetBoard()
+        box.forEach(i => i.textContent = "")
+        gameController.resetGame()
+        resetBtn.style.visibility = "hidden"
+    }
     
+    const setBox = (index, piece) => {
+        return box[index].textContent = piece
+    }
+
+    return { displayMessage, showReset, setBox}
+
+})();
+
+
+
     /* POP UP FORM */
     // let playerNumber = 0;
     // let player1;
@@ -172,9 +227,4 @@ const displayController = (() => {
     //     form.style.visibility = "hidden"
     //     nav.style.position = "fixed"
     // }
-
-    return { displayMessage, reset}
-
-})();
-
 

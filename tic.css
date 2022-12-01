@@ -75,7 +75,7 @@ nav {
     justify-content: center;
     align-items: center;
     text-align: center;
-    gap: 50px;
+    gap: 20px;
 
 }
 .board {
@@ -95,7 +95,8 @@ nav {
     color: white;
 }
 #reset {
-    /* visibility: hidden; */
+    visibility: hidden;
+    width: 80%;
 }
 
 
