@@ -9,9 +9,7 @@ body {
     /* background-color: #e8e8e8; */
     background-color: var(--creme);
 }
-body:not(nav) {
-    padding-top: 100px;
-}
+
 :root {
     --fontCursive: cursive;
     --ocean: #05386B;
@@ -19,6 +17,7 @@ body:not(nav) {
     --lightGreen: #5CDB95;
     --pastelGreen: #8EE4AF;
     --creme: #EDF5E1;
+    --navHieght: 100px;
 }
 nav {
     position: fixed;
@@ -29,7 +28,7 @@ nav {
 .nav-content {
     background-color: rgba(55, 150, 131, .8);
     width: 100vw;
-    height: 100px;
+    height: var(--navHieght);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -66,28 +65,69 @@ nav {
     color: white;
     background-color: var(--lightGreen);
 }
-.board-container {
+
+
+
+
+
+
+
+ main {
     width: 100vw;
-    /* height: 700px; */
     height: 100%;
-    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 70px;
+    padding-top: var(--navHieght);
+}
+
+/* Scoreboard */
+.scoreboard {
+    align-self: flex-start;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    gap: 20px;
-
+    gap: 30px;
+    width: 20%;
+    height: 400px;
+    margin-top: 50px;
 }
+
+/* scoreboard title */
+#name-title, #name {
+    color: rgb(48, 48, 48);
+}
+#name-title {
+    font-size: 3.5em;
+    font-weight: 100;
+}
+.score {
+    display: flex;
+    gap: 50px;
+    text-align: center;
+    font-size: 2em;
+}
+.item {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.item h3 {
+    font-weight: 400;
+}
+/* Game Board */
 .board {
     background-color: var(--ocean);
-    width: 60%;
-    height: 700px;
-    margin-top: 100px;
+    width: 800px;
+    height: 800px;
+    margin-top: 50px;
     display: grid;
     grid-template-rows: repeat(3, 1fr);
     grid-template-columns: repeat(3, 1fr);
 }
+
 .box {
     border: 5px solid var(--forest);
     display: flex;
@@ -96,24 +136,32 @@ nav {
     font-size: 5em;
     color: white;
 }
+
+/* POPUP FORM */
+
 #reset {
     visibility: hidden;
-    width: 80%;
+    width: 90%;
+    margin-top: 50px;
 }
 
+.foot-wrapper {
+    width: 100vw;
+    height: 50px;
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    background-color: var(--lightGreen);
+    margin-top: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+.foot-wrapper p {
+    font-size: 20px;
+}
 
 
 
@@ -142,11 +190,8 @@ nav {
 .form-container {
     width: 100vw;
     height: 100vh;
-    /* UNCOMMENT THIS WHEN WORKING */
-    /* visibility: visible; */
     visibility: hidden;
     display: none;
-    /* display: flex; */
     justify-content: center;
     align-items: center;
 }
