@@ -11,7 +11,7 @@ const Player = (first, last, piece) => {
 
 
 const Board = (() => {
-    let board = [];
+    let board = new Array(9);
 
     const setField = (index, piece) => {
         board[index] = piece;
@@ -52,7 +52,6 @@ const AI = (() => {
         return Math.floor(Math.random() * 8)
     }
 
-
     return {getRandomField}
 })()
 
@@ -64,6 +63,19 @@ const gameController = (() => {
     currentTurn = player.getPiece()
     let turnCount = 0;
     let gameOver = false;
+    let wins = [
+        /* Horizontal */
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        /* Vertical */
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        /* Diagonal */
+        [2, 4, 6],
+        [0, 4, 8]
+    ]
 
 
     const playRound = (field, allFields) => {
@@ -80,13 +92,81 @@ const gameController = (() => {
 
     const computerTurn = (allFields) => {
         if (turnCount < 8) {
-            const index = AI.getRandomField()
-            Board.setField(index, currentTurn)
-            allFields[index].textContent = currentTurn
-            checkForGameOver(index)
+            // const index = AI.getRandomField()
+            // Board.setField(index, currentTurn)
+            // allFields[index].textContent = currentTurn
+            // checkForGameOver(index)
+            // let winning = winners()
+            let winning = wins 
+            let board = Board.getBoard()
+            
+            // seperates all taken positions
+            xPos = []
+            oPos = []
+            board.forEach((i, index) => (i === "X") ? xPos.push(index) : (i === "O") ? oPos.push(index) : {})
+
+            // looks for x postions in wins list
+            let possibleWinning = winning.filter(arr => arr.some(num => xPos.includes(num)))
+
+            if (xPos.length === 1) {
+                index = AI.getRandomField();
+                Board.setField(index, currentTurn)
+                allFields[index].textContent = currentTurn
+                checkForGameOver(index)
+            } else {
+                console.log("X ", xPos)
+                console.log("O ", oPos)
+                console.log("WINNING ", possibleWinning)
+                
+                let winningXMoves = []
+                // for i in possiblewinning array
+                for (let i = 0; i < possibleWinning.length; i++) {
+                    // start count for how many numbers are in x and winPosib
+                    var count = 0;
+                    // numbers in each sub array
+                    for (let j = 0; j < possibleWinning[i].length; j++) {
+                        currentNum = possibleWinning[i][j]
+                        // for x in xPos
+                        for (let x = 0; x < xPos.length; x++) {
+                            if (xPos[x] === currentNum) {
+                                count += 1;
+                            }
+
+                            // if 2 items in winPos that are in Xpos
+                            if (count === 2) {
+                                winningXMoves.push(possibleWinning[i])
+                            }
+
+                        }
+                    }
+                }
+                // remove duplicates
+                winningXMoves = winningXMoves.map(JSON.stringify).filter((e,i,a) => i === a.indexOf(e)).map(JSON.parse)
+                // filter Possible winning x postions for o positions
+                let filteredX = winningXMoves.filter(i => !i.some(value => oPos.includes(value)))
+                // get o postitions that block x
+                const oOptions = filteredX.flat().filter( x => !xPos.includes(x))
+                
+                console.log(oOptions)
+
+                // if no blocking move can be found choose random field
+                if (oOptions.length === 0) {
+                    index = AI.getRandomField()
+                } else {
+                    index = oOptions[0]
+                }
+
+                // place piece
+                Board.setField(index, currentTurn)
+                allFields[index].textContent = currentTurn
+                checkForGameOver(index)
+
+            }
+
+
         }
     }
-
+    
     const checkForGameOver = (index) => {
         if (winningMove(index)) {
             gameOver = true
@@ -118,27 +198,28 @@ const gameController = (() => {
     }
 
     const winningMove = (index) => {
-        const winners = [
-            /* Horizontal */
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            /* Vertical */
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            /* Diagonal */
-            [2, 4, 6],
-            [0, 4, 8]
-        ]
+        // const winners = [
+        //     /* Horizontal */
+        //     [0, 1, 2],
+        //     [3, 4, 5],
+        //     [6, 7, 8],
+        //     /* Vertical */
+        //     [0, 3, 6],
+        //     [1, 4, 7],
+        //     [2, 5, 8],
+        //     /* Diagonal */
+        //     [2, 4, 6],
+        //     [0, 4, 8]
+        // ]
 
+        //winners
         // Long way in scratch.js
-        return winners.filter(row => row.includes(index))
+        return wins.filter(row => row.includes(index))
             .some(item => item.every(
                 (piece) => Board.getField(piece) === currentTurn
             ))
     }
-
+    // added winners temp function
     return { playRound, getGameOver, winningMove, resetGame}
 })();
 
@@ -228,3 +309,43 @@ const displayController = (() => {
     //     nav.style.position = "fixed"
     // }
 
+
+
+
+    // const computerTurn = (allFields) => {
+    //     if (turnCount < 8) {
+    //         // const index = AI.getRandomField()
+    //         // Board.setField(index, currentTurn)
+    //         // allFields[index].textContent = currentTurn
+    //         // checkForGameOver(index)
+    //         // let winning = winners()
+    //         let winning = wins 
+    //         let index;
+    //         let board = Board.getBoard()
+            
+    //         // seperates all taken positions
+    //         xPos = []
+    //         oPos = []
+    //         board.forEach((i, index) => (i === "X") ? xPos.push(index) : (i === "O") ? oPos.push(index) : {})
+
+    //         // looks for x postions in wins list
+    //         let possibleWinning = winning.filter(arr => arr.some(num => xPos.includes(num)))
+    //         // checks to see if x is 1 turn away from win
+    //         const winPositions = possibleWinning.filter(i => xPos.every(value => i.includes(value)))
+    //         if (winPositions.length === 0) {
+    //             index = AI.getRandomField()
+    //         } else {
+    //             oTurn = []
+    //             for (let i = 0; i < winPositions.length; i++) {
+    //                 oTurn.push(winPositions[i].filter(item => xPos.indexOf(item) == -1))
+    //             }
+    //             // gets position that x will win with
+    //             index = (oTurn.length > 1) ? oTurn[Math.floor(Math.random(oTurn.length))][0] : oTurn[0][0]
+    //             removeWinner(winPositions[0])
+    //         }
+    //         Board.setField(index, currentTurn)
+    //         allFields[index].textContent = currentTurn
+    //         checkForGameOver(index)
+
+    //     }
+    // }
